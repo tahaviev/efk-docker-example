@@ -1,0 +1,5 @@
+ARG FLUENTD_VERSION=v1.11.1-1.0
+FROM fluent/fluentd:${FLUENTD_VERSION}
+USER root
+ARG FLUENT_PLUGIN_ELASTICSEARCH_VERSION=4.1.1
+RUN gem install fluent-plugin-elasticsearch --no-document --version ${FLUENT_PLUGIN_ELASTICSEARCH_VERSION}

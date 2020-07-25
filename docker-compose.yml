@@ -1,0 +1,35 @@
+version: '3.3'
+services:
+  app:
+    build: ./app
+    logging:
+      driver: fluentd
+      options:
+        tag: my.app
+    network_mode: service:fluentd
+  fluentd:
+    build:
+      args:
+        FLUENTD_VERSION: v1.11.1-1.0
+        FLUENT_PLUGIN_ELASTICSEARCH_VERSION: 4.1.1
+      context: ./fluentd
+    depends_on:
+      - elasticsearch
+    ports:
+      - 24224:24224
+    volumes:
+      - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
+  elasticsearch:
+    environment:
+      discovery.type: single-node
+    image: elasticsearch:7.8.0
+    ports:
+      - 9200:9200
+  kibana:
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    image: kibana:7.8.0
+    ports:
+      - 5601:5601
